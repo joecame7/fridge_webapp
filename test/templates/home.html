@@ -1,0 +1,195 @@
+<!-- home.html -->
+{% extends 'base.html' %}
+
+{% block title %}Fridge Genie - Home{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1 class="display-5 mb-4">Welcome to Fridge Genie</h1>
+        <p class="lead">Your smart fridge management system. Keep track of your food, reduce waste, and get recipe suggestions.</p>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-6">
+        <div class="card card-dashboard mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-snow2"></i> Fridge Status</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="card-title">
+                            <i class="bi bi-door-open{% if sensor_data.door_status == 'closed' %}-fill{% endif %} 
+                               {% if sensor_data.door_status == 'open' %}door-open{% else %}door-closed{% endif %}"></i>
+                            Door Status
+                        </h5>
+                        <p class="card-text fs-4 {% if sensor_data.door_status == 'open' %}door-open{% else %}door-closed{% endif %}">
+                            {{ sensor_data.door_status|title }}
+                        </p>
+                        {% if sensor_data.door_status == 'open' %}
+                            <div class="alert alert-danger p-2">
+                                <i class="bi bi-exclamation-triangle"></i> Door is open!
+                            </div>
+                        {% endif %}
+                        <p class="text-muted small">Last opened: {{ sensor_data.last_opened }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="card-title">
+                            <i class="bi bi-thermometer-half 
+                               {% if sensor_data.temperature > 5 %}temp-warning{% else %}temp-normal{% endif %}"></i>
+                            Temperature
+                        </h5>
+                        <p class="card-text fs-4 {% if sensor_data.temperature > 5 %}temp-warning{% else %}temp-normal{% endif %}">
+                            {{ sensor_data.temperature }}°C
+                        </p>
+                        {% if sensor_data.temperature > 5 %}
+                            <div class="alert alert-warning p-2">
+                                <i class="bi bi-exclamation-triangle"></i> Temperature too high!
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <canvas id="tempChart" width="400" height="200"></canvas>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="#" class="btn btn-sm btn-outline-primary" id="refreshSensorData">
+                    <i class="bi bi-arrow-clockwise"></i> Refresh Data
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6">
+        <div class="card card-dashboard mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Expiring Items</h5>
+            </div>
+            <div class="card-body">
+                {% if expiring_items %}
+                    <div class="list-group">
+                        {% for expiry_item in expiring_items %}
+                            <div class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ expiry_item.item.name }}</h5>
+                                    <small class="{% if expiry_item.days_left == 0 %}expiry-warning{% elif expiry_item.days_left <= 2 %}expiry-soon{% endif %}">
+                                        {% if expiry_item.days_left == 0 %}
+                                            Expires today!
+                                        {% elif expiry_item.days_left == 1 %}
+                                            Expires tomorrow
+                                        {% else %}
+                                            Expires in {{ expiry_item.days_left }} days
+                                        {% endif %}
+                                    </small>
+                                </div>
+                                <p class="mb-1">Quantity: {{ expiry_item.item.quantity }}</p>
+                                <small>Category: {{ expiry_item.item.category }}</small>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="card-text">No items expiring soon.</p>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('items') }}" class="btn btn-sm btn-outline-warning">
+                    <i class="bi bi-list-check"></i> View All Items
+                </a>
+            </div>
+        </div>
+        
+        <div class="card card-dashboard">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-journal-richtext"></i> Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('scan_barcode') }}" class="btn btn-primary">
+                        <i class="bi bi-upc-scan"></i> Scan New Item
+                    </a>
+                    <a href="{{ url_for('add_item') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-plus-circle"></i> Add Item Manually
+                    </a>
+                    <a href="{{ url_for('recipes') }}" class="btn btn-outline-success">
+                        <i class="bi bi-journal-richtext"></i> View Recipe Suggestions
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Temperature chart
+    const ctx = document.getElementById('tempChart').getContext('2d');
+    
+    // Generate mock data for the last 24 hours
+    const labels = [];
+    const data = [];
+    const now = new Date();
+    
+    for (let i = 24; i >= 0; i--) {
+        const date = new Date(now);
+        date.setHours(now.getHours() - i);
+        labels.push(date.getHours() + ':00');
+        
+        // Generate some random temp data between 2 and 6
+        const temp = Math.random() * 3 + 2;
+        data.push(temp.toFixed(1));
+    }
+    
+    const tempChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Temperature (°C)',
+                data: data,
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    min: 0,
+                    max: 10,
+                    title: {
+                        display: true,
+                        text: 'Temperature (°C)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time'
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Temperature History (Last 24 Hours)'
+                }
+            }
+        }
+    });
+    
+    // Refresh sensor data
+    document.getElementById('refreshSensorData').addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        fetch('/api/sensor_data')
+            .then(response => response.json())
+            .then(data => {
+                location.reload();
+            });
+    });
+</script>
+{% endblock %}

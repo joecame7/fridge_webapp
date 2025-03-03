@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Settings - FridgeGenie{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2><i class="bi bi-gear"></i> Settings</h2>
+            <p class="text-muted">Configure your FridgeGenie preferences and alerts</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Notification Settings</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('settings') }}" method="POST">
+                        <div class="mb-4">
+                            <h6 class="card-subtitle mb-3 text-muted">Expiry Notifications</h6>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="notifications" name="notifications" {% if settings.notifications %}checked{% endif %}>
+                                <label class="form-check-label" for="notifications">Enable expiry notifications</label>
+                            </div>
+                            <div class="mb-3">
+                                <label for="expiry_alert_days" class="form-label">Notify me when items expire within</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="expiry_alert_days" name="expiry_alert_days" value="{{ settings.expiry_alert_days }}" min="1" max="14">
+                                    <span class="input-group-text">days</span>
+                                </div>
+                                <div class="form-text">You'll be notified about items expiring soon</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h6 class="card-subtitle mb-3 text-muted">Door Monitoring</h6>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="door_open_alert" name="door_open_alert" {% if settings.door_open_alert %}checked{% endif %}>
+                                <label class="form-check-label" for="door_open_alert">Alert when door is left open</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h6 class="card-subtitle mb-3 text-muted">Sensor Thresholds</h6>
+                            <div class="mb-3">
+                                <label for="temperature_threshold" class="form-label">Temperature threshold (°C)</label>
+                                <div class="input-group">
+                                    <input type="number" step="0.1" class="form-control" id="temperature_threshold" name="temperature_threshold" value="{{ settings.temperature_threshold }}" min="0" max="10">
+                                    <span class="input-group-text">°C</span>
+                                </div>
+                                <div class="form-text">Alert when fridge temperature exceeds this value</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="light_threshold" class="form-label">Light threshold (lux)</label>
+                                <input type="number" class="form-control" id="light_threshold" name="light_threshold" value="{{ settings.light_threshold }}" min="0" max="1000">
+                                <div class="form-text">Light level that indicates the door is open</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="motion_threshold" class="form-label">Motion threshold</label>
+                                <input type="number" step="0.1" class="form-control" id="motion_threshold" name="motion_threshold" value="{{ settings.motion_threshold }}" min="0" max="1">
+                                <div class="form-text">Sensitivity for motion detection (0-1)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('home') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to Home
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> Save Settings
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">About FridgeGenie</h5>
+                </div>
+                <div class="card-body">
+                    <p>FridgeGenie helps you track your food inventory, monitor fridge conditions, and reduce food waste.</p>
+                    <hr>
+                    <p class="mb-1"><strong>Version:</strong> 0.0.1 (Test Prototype)</p>
+                    <p class="mb-1"><strong>Device ID:</strong> FG-{{ range(1000, 9999)|random }}</p>
+                    <p><strong>Last Connection:</strong> {{ settings.last_updated|default("Now") }}</p>
+                </div>
+            </div>
+            
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">System Status</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>System:</span>
+                        <span class="badge bg-success">Online</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Sensors:</span>
+                        <span class="badge bg-success">Connected</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Notifications:</span>
+                        <span class="badge {% if settings.notifications %}bg-success{% else %}bg-secondary{% endif %}">
+                            {% if settings.notifications %}Enabled{% else %}Disabled{% endif %}
+                        </span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Door Alerts:</span>
+                        <span class="badge {% if settings.door_open_alert %}bg-success{% else %}bg-secondary{% endif %}">
+                            {% if settings.door_open_alert %}Enabled{% else %}Disabled{% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

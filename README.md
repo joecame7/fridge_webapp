@@ -1,3 +1,33 @@
+# Smart Fridge Monitoring System
+
+A comprehensive IoT-based smart refrigerator monitoring system that combines hardware sensors with a modern web interface to track food inventory, monitor environmental conditions, and prevent food waste through intelligent notifications.
+
+## 🌟 Features
+
+- **Real-time Environmental Monitoring**: Track temperature, humidity, and lighting conditions inside your refrigerator
+- **Automated Barcode Scanning**: Camera-based barcode detection with automatic product identification using OpenFoodFacts API
+- **Inventory Management**: Add, edit, and track food items with expiration dates through an intuitive web interface
+- **Smart Notifications**: Automated email alerts for expiring items to reduce food waste
+- **Motion Detection**: PIR sensor integration for user presence detection
+- **Remote Access**: Secure remote monitoring via NGROK tunneling
+- **Database Integration**: SQLite database for persistent data storage
+- **Responsive Web UI**: Mobile-friendly Flask-based web application
+
+## 🛠️ Hardware Components
+
+- Raspberry Pi with camera module
+- Grove sensors (temperature, humidity, light, PIR motion, ultrasonic distance)
+- LCD display for real-time sensor readings
+- GrovePi shield for sensor connectivity
+
+## 🚀 Technology Stack
+
+- **Backend**: Python, Flask, SQLite
+- **Frontend**: HTML5, CSS3, JavaScript
+- **Hardware**: Raspberry Pi, Grove sensors, Pi Camera
+- **APIs**: OpenFoodFacts for product data
+- **Communication**: NGROK for remote access, SMTP for notifications
+
 ├── temp/
 │   ├── static/
 │   │   ├── BACKGROUND.png
@@ -25,7 +55,7 @@
 ├── readdb.py
 ├── README.md
 ├── requirements.txt
-├── sendnotification.py             
+├── sendnotification.py
 
 
 Prerequisites - software, libraries, frameworks

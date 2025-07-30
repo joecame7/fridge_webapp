@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Recommended Recipes - FridgeGenie{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2><i class="bi bi-journal-text"></i> Recommended Recipes</h2>
+            </div>
+            <p class="text-muted">Based on ingredients you currently have in your fridge</p>
+        </div>
+    </div>
+
+    {% if recipes %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for recipe in recipes %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        {% if recipe.image_url %}
+                            <img src="{{ recipe.image_url }}" class="card-img-top" alt="{{ recipe.name }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="bi bi-journal-richtext text-secondary" style="font-size: 3rem;"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="card-body">
+                            <h5 class="card-title">{{ recipe.name }}</h5>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-success">
+                                    {{ (recipe.matching_ingredients / recipe.total_ingredients * 100) | int }}% ingredients match
+                                </span>
+                                <small class="text-muted">
+                                    {{ recipe.matching_ingredients }}/{{ recipe.total_ingredients }} ingredients
+                                </small>
+                            </div>
+                            
+                            <p class="card-text">
+                                <strong>Ingredients you have:</strong>
+                                <ul class="mb-0">
+                                    {% for ingredient in recipe.ingredients %}
+                                        <li>{{ ingredient }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </p>
+                        </div>
+                        
+                        <div class="card-footer bg-transparent">
+                            <a href="{{ url_for('recipe_details', recipe_id=recipe.id) }}" class="btn btn-primary w-100">
+                                <i class="bi bi-eye"></i> View Recipe
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-journal-x text-muted" style="font-size: 4rem;"></i>
+                        <h4 class="mt-3">No Recommended Recipes</h4>
+                        <p class="text-muted">
+                            We couldn't find any recipes that match your current ingredients.
+                            Try adding more items to your fridge.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

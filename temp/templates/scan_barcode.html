@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Scan Barcode - FridgeGenie{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2><i class="bi bi-upc-scan"></i> Scan Barcode</h2>
+            <p class="text-muted">Scan a product barcode to add it to your fridge</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <!-- Mock Scanner Interface -->
+                    <div class="scanner-container mb-4">
+                        <div id="scanner-view" class="scanner-view">
+                            <div class="scanner-overlay">
+                                <div class="scan-area">
+                                    <div class="scan-line"></div>
+                                </div>
+                            </div>
+                            <div class="scanner-message text-center">
+                                <span id="scanning-status">Position barcode in the scan area</span>
+                            </div>
+                        </div>
+                        <button id="scan-button" class="btn btn-primary btn-lg d-block mx-auto mt-3">
+                            <i class="bi bi-camera"></i> Simulate Scan
+                        </button>
+                    </div>
+                    
+                    <hr>
+                    
+                    <!-- Manual Barcode Entry -->
+                    <div class="manual-entry">
+                        <h5 class="card-title">Or enter barcode manually</h5>
+                        <form action="{{ url_for('lookup_barcode') }}" method="POST">
+                            <div class="mb-3">
+                                <label for="barcode" class="form-label">Barcode</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="barcode" name="barcode" placeholder="Enter barcode..." required>
+                                    <button class="btn btn-outline-secondary" type="submit">
+                                        <i class="bi bi-search"></i> Lookup
+                                    </button>
+                                </div>
+                                <div class="form-text">
+                                    For demo: Try <code>5000128677424</code> for Milk or <code>5000328748591</code> for Cheddar Cheese
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-transparent">
+                    <a href="{{ url_for('items') }}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Items
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .scanner-view {
+        position: relative;
+        width: 100%;
+        height: 300px;
+        background-color: #000;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+    
+    .scanner-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .scan-area {
+        width: 80%;
+        height: 120px;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        border-radius: 8px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .scan-line {
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background-color: #28a745;
+        top: 0;
+        box-shadow: 0 0 8px 2px rgba(40, 167, 69, 0.8);
+        animation: scan 2s linear infinite;
+    }
+    
+    .scanner-message {
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        color: white;
+        font-weight: bold;
+    }
+    
+    @keyframes scan {
+        0% {
+            top: 0;
+        }
+        50% {
+            top: 118px;
+        }
+        100% {
+            top: 0;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const scanButton = document.getElementById('scan-button');
+        const scanningStatus = document.getElementById('scanning-status');
+        const barcodeInput = document.getElementById('barcode');
+        
+        // Demo barcodes for simulation
+        const demoBarcodes = [
+            '5000128677424', // Milk
+            '5000328748591'  // Cheddar Cheese
+        ];
+        
+        scanButton.addEventListener('click', function() {
+            // Disable button during "scanning"
+            scanButton.disabled = true;
+            scanningStatus.textContent = "Scanning...";
+            
+            // Simulate scanning process
+            setTimeout(function() {
+                scanningStatus.textContent = "Barcode detected!";
+                
+                // Pick a random demo barcode
+                const randomBarcode = demoBarcodes[Math.floor(Math.random() * demoBarcodes.length)];
+                
+                // Fill the input field with the barcode
+                barcodeInput.value = randomBarcode;
+                
+                // Submit the form automatically after a delay
+                setTimeout(function() {
+                    scanningStatus.textContent = "Processing...";
+                    barcodeInput.form.submit();
+                }, 1000);
+                
+            }, 2000);
+        });
+    });
+</script>
+{% endblock %}

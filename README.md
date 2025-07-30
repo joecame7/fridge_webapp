@@ -57,8 +57,9 @@ A comprehensive IoT-based smart refrigerator monitoring system that combines har
 ├── requirements.txt
 ├── sendnotification.py
 
+## 📋 Prerequisites
 
-Prerequisites - software, libraries, frameworks
+### Software, Libraries, and Frameworks
 
 flask
 flask-apschedular
@@ -73,7 +74,7 @@ requests
 OpenFoodFacts API
 NGROK
 
-Installation 
+## 🚀 Installation 
 
 pip install -r requirements.txt
 
@@ -81,27 +82,24 @@ Install and set up NGROK - https://ngrok.com/downloads/linux
 
 Set up the device by placing the camera, display and motion sensor outside of the refrigerator. The other sensors go inside the fridge for environmental tracking. 
 
+## ⚙️ Configuration
 
-Configuration - Environment Variables
+### Environment Variables
 
 Gmail App Password 
 
-
-
-
-Running Instructions 
+## 🏃‍♂️ Running Instructions 
 
 python3 MasterSensorFile.py
 python3 temp/app.py
 ngrok http 5000
 
+## 📊 Examples of Output
 
-Examples of output 
-
-MasterSensorFile.py output
+### MasterSensorFile.py output
 {"temperature": 30.0, "humidity": 0.0, "light_status": "On", "distance": 10, "pir_value": 1, "barcode_data": "No barcode found"}
 
-app.py output
+### app.py output
 Started expiry notification scheduler
  * Serving Flask app "app" (lazy loading)
  * Environment: production
@@ -110,7 +108,7 @@ Started expiry notification scheduler
  * Debug mode: off
  * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
 
-ngrok output
+### ngrok output
 
 ngrok                                                           (Ctrl+C to quit)
                                                                                
@@ -126,9 +124,7 @@ Forwarding                    https://6fcb-131-251-32-104.ngrok-free.app -> http
 Connections                   ttl     opn     rt1     rt5     p50     p90      
                               0       0       0.00    0.00    0.00    0.00  
 
-
-
-Third-Party Software and Frameworks
+## 📚 Third-Party Software and Frameworks
 
 Flask - 3.1.0
 Purpose: Web framework 
@@ -185,10 +181,9 @@ time, os, datetime (built-in) - Python 3.x
 Purpose: System operations and time handling
 https://docs.python.org/3/
 
+## 🔧 Troubleshooting
 
-Troubleshooting
-
-Flask server not accessible? 
+### Flask server not accessible? 
 
 Ensure NGROK is started with the correct port, run ngrok http 5000, and use the forwarded HTTPS URL shown in terminal.
 

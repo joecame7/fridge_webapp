@@ -1,0 +1,9 @@
+flask
+flask-apscheduler
+flask-cors
+grovepi
+pandas
+picamera
+Pillow
+pyzbar
+requests

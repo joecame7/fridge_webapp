@@ -187,22 +187,22 @@ https://docs.python.org/3/
 
 Ensure NGROK is started with the correct port, run ngrok http 5000, and use the forwarded HTTPS URL shown in terminal.
 
-Barcode not detected? 
+### Barcode not detected? 
 
 The lighting may be poor. Make sure the barcode is clearly visible to the camera, well-lit and in focus. Follow the distance required on the LCD screen.
 
-GrovePi sensor not responding? 
+### GrovePi sensor not responding? 
 
 Double-check that the wiring and the port assignments in the code. Run GrovePi's update tool, grove_firmware_update
 
-PiCamera not working? 
+### PiCamera not working? 
 
 Run sudo raspi-config, enable the camera interface and reboot. Check camera wire is connected. 
 
-Emails not sending? 
+### Emails not sending? 
 
 Check SMTP server settings, credentials and port.
 
-Module not found?
+### Module not found?
 
 Run pip install -r requirements.txt
